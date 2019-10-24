@@ -1,0 +1,158 @@
+Reset time counters for profiling
+(enter) Parsing and Evaluating the circuit 	[             ]	(0.0009s x1.00 from start)
+	 Evaluation Done in 0.040143 seconds 
+(leave) Parsing and Evaluating the circuit 	[0.8549s x1.00]	(0.8558s x1.00 from start)
+Translating Constraints ... 
+	Constraint translation done
+	Memory usage for constraint translation: 248 MB
+Assignment of values done .. 
+
+Printing output assignment:: 
+[output] Value of Wire # 441607 :: 2313319463
+[output] Value of Wire # 441608 :: 3576598770
+[output] Value of Wire # 441609 :: 82517346
+[output] Value of Wire # 441610 :: 4082312120
+[output] Value of Wire # 441611 :: 841840543
+[output] Value of Wire # 441612 :: 2100936440
+[output] Value of Wire # 441613 :: 2733594033
+[output] Value of Wire # 441614 :: 931703193
+[output] Value of Wire # 441615 :: 2730868682
+[output] Value of Wire # 441616 :: 2983351557
+[output] Value of Wire # 441617 :: 2998329122
+[output] Value of Wire # 441618 :: 1841493648
+[output] Value of Wire # 441619 :: 1563339891
+[output] Value of Wire # 441620 :: 1792348966
+[output] Value of Wire # 441621 :: 1228354577
+[output] Value of Wire # 441622 :: 1717647764
+[output] Value of Wire # 441623 :: 1078585069
+[output] Value of Wire # 441624 :: 314383368
+[output] Value of Wire # 441625 :: 1703729203
+[output] Value of Wire # 441626 :: 99635775
+[output] Value of Wire # 441627 :: 3585094045
+[output] Value of Wire # 441628 :: 2039519682
+[output] Value of Wire # 441629 :: 169198867
+[output] Value of Wire # 441630 :: 3929162159
+[output] Value of Wire # 441631 :: 986315678
+[output] Value of Wire # 441632 :: 1109093128
+[output] Value of Wire # 441633 :: 4258726756
+[output] Value of Wire # 441634 :: 856784108
+[output] Value of Wire # 441635 :: 1766756900
+[output] Value of Wire # 441636 :: 348130949
+[output] Value of Wire # 441637 :: 600138658
+[output] Value of Wire # 441638 :: 2041382346
+[output] Value of Wire # 441639 :: 4093535746
+[output] Value of Wire # 441640 :: 1782241399
+[output] Value of Wire # 441641 :: 4013089668
+[output] Value of Wire # 441642 :: 2576529059
+[output] Value of Wire # 441643 :: 2110609987
+[output] Value of Wire # 441644 :: 475575470
+[output] Value of Wire # 441645 :: 4233802115
+[output] Value of Wire # 441646 :: 977431768
+[output] Value of Wire # 441647 :: 1722497221
+[output] Value of Wire # 441648 :: 4159962279
+[output] Value of Wire # 441649 :: 1323907932
+[output] Value of Wire # 441650 :: 2879665891
+[output] Value of Wire # 441651 :: 1210207566
+[output] Value of Wire # 441652 :: 1799746367
+[output] Value of Wire # 441653 :: 61078266
+[output] Value of Wire # 441654 :: 3818585230
+[output] Value of Wire # 441655 :: 3014325932
+[output] Value of Wire # 441656 :: 2236867249
+[output] Value of Wire # 441657 :: 1032212622
+[output] Value of Wire # 441658 :: 4122378740
+[output] Value of Wire # 441659 :: 962520401
+[output] Value of Wire # 441660 :: 468328621
+[output] Value of Wire # 441661 :: 4052183270
+[output] Value of Wire # 441662 :: 303297060
+[output] Value of Wire # 441663 :: 3908841881
+[output] Value of Wire # 441664 :: 1855979192
+[output] Value of Wire # 441665 :: 593727499
+[output] Value of Wire # 441666 :: 3253658526
+[output] Value of Wire # 441667 :: 2710158980
+[output] Value of Wire # 441668 :: 3572081562
+[output] Value of Wire # 441669 :: 2172107172
+[output] Value of Wire # 441670 :: 2369030895
+
+(enter) Call to run_r1cs_ppzksnark_prover  	[             ]	(5.7028s x1.00 from start)
+
+================================================================================
+R1CS ppzkSNARK Prover
+================================================================================
+
+  (enter) Reconstitution of Proving Key      	[             ]	(5.7028s x1.00 from start)
+  (leave) Reconstitution of Proving Key      	[32.1669s x1.00]	(37.8697s x1.00 from start)
+  (enter) Call to r1cs_ppzksnark_prover      	[             ]	(37.8698s x1.00 from start)
+    (enter) Compute the polynomial H           	[             ]	(37.8706s x1.00 from start)
+      (enter) Call to r1cs_to_qap_witness_map    	[             ]	(37.8706s x1.00 from start)
+        * Selected domain: step_radix2
+        (enter) Compute evaluation of polynomials A, B on set S	[             ]	(38.0693s x1.00 from start)
+        (leave) Compute evaluation of polynomials A, B on set S	[0.1046s x1.00]	(38.1739s x1.00 from start)
+        (enter) Compute coefficients of polynomial A	[             ]	(38.1739s x1.00 from start)
+        (leave) Compute coefficients of polynomial A	[0.4020s x1.00]	(38.5759s x1.00 from start)
+        (enter) Compute coefficients of polynomial B	[             ]	(38.5760s x1.00 from start)
+        (leave) Compute coefficients of polynomial B	[0.4003s x1.00]	(38.9763s x1.00 from start)
+        (enter) Compute ZK-patch                   	[             ]	(38.9763s x1.00 from start)
+        (leave) Compute ZK-patch                   	[0.0356s x1.00]	(39.0119s x1.00 from start)
+        (enter) Compute evaluation of polynomial A on set T	[             ]	(39.0120s x1.00 from start)
+        (leave) Compute evaluation of polynomial A on set T	[0.4157s x1.00]	(39.4277s x1.00 from start)
+        (enter) Compute evaluation of polynomial B on set T	[             ]	(39.4277s x1.00 from start)
+        (leave) Compute evaluation of polynomial B on set T	[0.4129s x1.00]	(39.8406s x1.00 from start)
+        (enter) Compute evaluation of polynomial H on set T	[             ]	(39.8407s x1.00 from start)
+          (enter) Compute evaluation of polynomial C on set S	[             ]	(39.8559s x1.00 from start)
+          (leave) Compute evaluation of polynomial C on set S	[0.0868s x1.00]	(39.9427s x1.00 from start)
+          (enter) Compute coefficients of polynomial C	[             ]	(39.9427s x1.00 from start)
+          (leave) Compute coefficients of polynomial C	[0.4004s x1.00]	(40.3431s x1.00 from start)
+          (enter) Compute evaluation of polynomial C on set T	[             ]	(40.3432s x1.00 from start)
+          (leave) Compute evaluation of polynomial C on set T	[0.4132s x1.00]	(40.7563s x1.00 from start)
+          (enter) Divide by Z on set T               	[             ]	(40.7605s x1.00 from start)
+          (leave) Divide by Z on set T               	[0.3205s x1.00]	(41.0811s x1.00 from start)
+        (leave) Compute evaluation of polynomial H on set T	[1.2404s x1.00]	(41.0811s x1.00 from start)
+        (enter) Compute coefficients of polynomial H	[             ]	(41.0811s x1.00 from start)
+        (leave) Compute coefficients of polynomial H	[0.4330s x1.00]	(41.5141s x1.00 from start)
+        (enter) Compute sum of H and ZK-patch      	[             ]	(41.5141s x1.00 from start)
+        (leave) Compute sum of H and ZK-patch      	[0.0036s x1.00]	(41.5177s x1.00 from start)
+      (leave) Call to r1cs_to_qap_witness_map    	[3.6471s x1.00]	(41.5177s x1.00 from start)
+    (leave) Compute the polynomial H           	[3.6484s x1.00]	(41.5191s x1.00 from start)
+    (enter) Compute the proof                  	[             ]	(41.5210s x1.00 from start)
+      (enter) Compute answer to A-query          	[             ]	(41.5210s x1.00 from start)
+      (enter) Process scalar vector              	[             ]	(41.5211s x1.00 from start)
+        * Elements of w skipped: 71948 (48.28%)
+        * Elements of w processed with special addition: 71187 (47.77%)
+        * Elements of w remaining: 5873 (3.94%)
+      (leave) Process scalar vector              	[0.1160s x1.00]	(41.6370s x1.00 from start)
+      (leave) Compute answer to A-query          	[0.1512s x1.00]	(41.6722s x1.00 from start)
+      (enter) Compute answer to B-query          	[             ]	(41.6722s x1.00 from start)
+      (enter) Process scalar vector              	[             ]	(41.6723s x1.00 from start)
+        * Elements of w skipped: 45694 (53.85%)
+        * Elements of w processed with special addition: 39162 (46.15%)
+        * Elements of w remaining: 0 (0.00%)
+      (leave) Process scalar vector              	[0.1198s x1.00]	(41.7920s x1.00 from start)
+      (leave) Compute answer to B-query          	[0.1198s x1.00]	(41.7921s x1.00 from start)
+      (enter) Compute answer to C-query          	[             ]	(41.7921s x1.00 from start)
+      (enter) Process scalar vector              	[             ]	(41.7921s x1.00 from start)
+        * Elements of w skipped: 150986 (55.09%)
+        * Elements of w processed with special addition: 120322 (43.90%)
+        * Elements of w remaining: 2749 (1.00%)
+      (leave) Process scalar vector              	[0.1969s x1.00]	(41.9890s x1.00 from start)
+      (leave) Compute answer to C-query          	[0.2021s x1.00]	(41.9942s x1.00 from start)
+      (enter) Compute answer to H-query          	[             ]	(41.9942s x1.00 from start)
+      (leave) Compute answer to H-query          	[6.3472s x1.00]	(48.3414s x1.00 from start)
+      (enter) Compute answer to K-query          	[             ]	(48.3414s x1.00 from start)
+      (enter) Process scalar vector              	[             ]	(48.3414s x1.00 from start)
+        * Elements of w skipped: 151009 (53.93%)
+        * Elements of w processed with special addition: 120322 (42.97%)
+        * Elements of w remaining: 8686 (3.10%)
+      (leave) Process scalar vector              	[0.0998s x1.00]	(48.4412s x1.00 from start)
+      (leave) Compute answer to K-query          	[0.1230s x1.00]	(48.4645s x1.00 from start)
+    (leave) Compute the proof                  	[6.9435s x1.00]	(48.4645s x1.00 from start)
+  (leave) Call to r1cs_ppzksnark_prover      	[10.5948s x1.00]	(48.4645s x1.00 from start)
+  * G1 elements in proof: 7
+  * G2 elements in proof: 1
+  * Proof size in bits: 2294
+
+  * Peak vsize (physical memory+swap) in mebibytes (after prover): 784
+  (enter) Serialization of Proof             	[             ]	(48.4646s x1.00 from start)
+  (leave) Serialization of Proof             	[0.0002s x1.00]	(48.4648s x1.00 from start)
+  (enter) Serialization of Primary Input     	[             ]	(48.4648s x1.00 from start)
+  (leave) Serialization of Primary Input     	[0.0001s x1.01]	(48.4649s x1.00 from start)
+(leave) Call to run_r1cs_ppzksnark_prover  	[42.7621s x1.00]	(48.4649s x1.00 from start)

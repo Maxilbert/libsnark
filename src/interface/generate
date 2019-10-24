@@ -1,0 +1,2 @@
+#!/bin/sh
+./run_libsnark_generator oaep.arith oaep.in > log.gnrt &

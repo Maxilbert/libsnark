@@ -53,3 +53,7 @@ src/interface/Primary_Input
 src/interface/Proving_Key
 
 src/interface/Verification_Key
+
+src/interface/Processed_Verification_Key
+
+src/interface/Proof
