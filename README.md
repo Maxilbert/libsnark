@@ -1,3 +1,10 @@
+In the libsnark/src/interface/, there are some interfaces implemented for Ahmed Kosba's JSnark project
+
+Some running instances are also shown there
+
+
+here down below is the readme of libsnark
+
 libsnark: a C++ library for zkSNARK proofs
 ================================================================================
 
