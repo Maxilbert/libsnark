@@ -145,10 +145,6 @@ Fp2_model<n,modulus> Fp2_model<n,modulus>::Frobenius_map(unsigned long power) co
 template<mp_size_t n, const bigint<n>& modulus>
 Fp2_model<n,modulus> Fp2_model<n,modulus>::sqrt() const
 {
-    if (is_zero()) {
-        return *this;
-    }
-
     Fp2_model<n,modulus> one = Fp2_model<n,modulus>::one();
 
     size_t v = Fp2_model<n,modulus>::s;
@@ -157,7 +153,7 @@ Fp2_model<n,modulus> Fp2_model<n,modulus>::sqrt() const
     Fp2_model<n,modulus> x = (*this) * w;
     Fp2_model<n,modulus> b = x * w; // b = (*this)^t
 
-
+#if DEBUG
     // check if square with euler's criterion
     Fp2_model<n,modulus> check = b;
     for (size_t i = 0; i < v-1; ++i)
@@ -166,9 +162,9 @@ Fp2_model<n,modulus> Fp2_model<n,modulus>::sqrt() const
     }
     if (check != one)
     {
-        assert_except(0);
+        assert(0);
     }
-
+#endif
 
     // compute square root with Tonelli--Shanks
     // (does not terminate if not a square!)

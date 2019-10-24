@@ -9,7 +9,10 @@
 # To override these, use "make OPTFLAGS=..." etc.
 CURVE = BN128
 OPTFLAGS = -O2 -march=native -mtune=native
-FEATUREFLAGS = -DUSE_ASM -DMONTGOMERY_OUTPUT
+FEATUREFLAGS = -DUSE_ASM #-DMONTGOMERY_OUTPUT
+
+NO_GTEST=1
+NO_SUPERCOP=1
 
 # Initialize this using "CXXFLAGS=... make". The makefile appends to that.
 CXXFLAGS += -std=c++11 -Wall -Wextra -Wno-unused-parameter -Wno-comment -Wfatal-errors $(OPTFLAGS) $(FEATUREFLAGS) -DCURVE_$(CURVE)
@@ -18,7 +21,7 @@ DEPSRC = depsrc
 DEPINST = depinst
 
 CXXFLAGS += -I$(DEPINST)/include -Isrc
-LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath,$(DEPINST)/lib
+LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
 LDLIBS += -lgmpxx -lgmp -lboost_program_options
 # OpenSSL and its dependencies (needed explicitly for static builds):
 LDLIBS += -lcrypto -ldl -lz
@@ -51,9 +54,52 @@ LIB_SRCS = \
 	src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pairing.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pp.cpp \
+	src/algebra/curves/edwards/edwards_g1.cpp \
+	src/algebra/curves/edwards/edwards_g2.cpp \
+	src/algebra/curves/edwards/edwards_init.cpp \
+	src/algebra/curves/edwards/edwards_pairing.cpp \
+	src/algebra/curves/edwards/edwards_pp.cpp \
+	src/algebra/curves/mnt/mnt4/mnt4_g1.cpp \
+	src/algebra/curves/mnt/mnt4/mnt4_g2.cpp \
+	src/algebra/curves/mnt/mnt4/mnt4_init.cpp \
+	src/algebra/curves/mnt/mnt4/mnt4_pairing.cpp \
+	src/algebra/curves/mnt/mnt4/mnt4_pp.cpp \
+	src/algebra/curves/mnt/mnt46_common.cpp \
+	src/algebra/curves/mnt/mnt6/mnt6_g1.cpp \
+	src/algebra/curves/mnt/mnt6/mnt6_g2.cpp \
+	src/algebra/curves/mnt/mnt6/mnt6_init.cpp \
+	src/algebra/curves/mnt/mnt6/mnt6_pairing.cpp \
+	src/algebra/curves/mnt/mnt6/mnt6_pp.cpp \
+	src/common/data_structures/integer_permutation.cpp \
+	src/common/data_structures/set_commitment.cpp \
+	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
+	src/common/default_types/tinyram_ppzksnark_pp.cpp \
+	src/common/default_types/r1cs_ppzkadsnark_pp.cpp \
+	src/common/default_types/tinyram_zksnark_pp.cpp \
 	src/common/profiling.cpp \
+	src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
+	src/common/routing_algorithms/benes_routing_algorithm.cpp \
 	src/common/utils.cpp \
-	src/gadgetlib1/constraint_profiling.cpp	
+	src/gadgetlib1/constraint_profiling.cpp \
+	src/gadgetlib2/adapters.cpp \
+	src/gadgetlib2/constraint.cpp \
+	src/gadgetlib2/examples/simple_example.cpp \
+	src/gadgetlib2/gadget.cpp \
+	src/gadgetlib2/infrastructure.cpp \
+	src/gadgetlib2/integration.cpp \
+	src/gadgetlib2/pp.cpp \
+	src/gadgetlib2/protoboard.cpp \
+	src/gadgetlib2/variable.cpp \
+	src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
+	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
+	src/relations/ram_computations/memory/examples/memory_contents_examples.cpp \
+	src/relations/ram_computations/memory/memory_store_trace.cpp \
+	src/relations/ram_computations/memory/ra_memory.cpp \
+	src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
+	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp \
+	src/interface/CircuitReader.cpp \
+	src/interface/Util.cpp 
+
 ifeq ($(CURVE),BN128)
 	LIB_SRCS += \
 	        src/algebra/curves/bn128/bn128_g1.cpp \
@@ -67,51 +113,55 @@ ifeq ($(CURVE),BN128)
 	AR_LIBS += $(DEPINST)/lib/libzm.a
 endif
 
-# FIXME: most of these are broken due to removed code.
-DISABLED_EXECUTABLES = \
-	src/algebra/curves/tests/test_groups \
-	src/algebra/fields/tests/test_fields \
-	src/common/routing_algorithms/profiling/profile_routing_algorithms \
-	src/common/routing_algorithms/tests/test_routing_algorithms \
-	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
-	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
-	src/gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget \
-	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
-	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
-	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
-	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
-	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
-	src/relations/arithmetic_programs/qap/tests/test_qap \
-	src/relations/arithmetic_programs/ssp/tests/test_ssp \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/profiling/profile_r1cs_mp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd \
-	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/profiling/profile_r1cs_gg_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/tests/test_r1cs_gg_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
-
 EXECUTABLES = \
-	src/algebra/curves/tests/test_bilinearity \
-	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
-	src/algebra/fields/tests/test_bigint
+	src/interface/run_libsnark \
+	src/interface/run_libsnark_generator \
+	src/interface/run_libsnark_prover \
+	src/interface/run_libsnark_verifier \
+
+#	src/algebra/curves/tests/test_bilinearity \
+#	src/algebra/curves/tests/test_groups \
+#	src/algebra/fields/tests/test_fields \
+#	src/common/routing_algorithms/profiling/profile_routing_algorithms \
+#	src/common/routing_algorithms/tests/test_routing_algorithms \
+#	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
+#	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
+#	src/gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget \
+#	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
+#	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+#	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
+#	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
+#	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
+#	src/relations/arithmetic_programs/qap/tests/test_qap \
+#	src/relations/arithmetic_programs/ssp/tests/test_ssp \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/profiling/profile_r1cs_mp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd \
+#	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
+#	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
+#	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 
+EXECUTABLES_WITH_GTEST = \
+	src/gadgetlib2/examples/tutorial \
+	src/gadgetlib2/tests/gadgetlib2_test
 
+EXECUTABLES_WITH_SUPERCOP = \
+	src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
 
 DOCS = README.html
 
@@ -140,9 +190,7 @@ else
 	CXXFLAGS += -fPIC
 endif
 
-ifeq ($(MULTICORE),1)
-	CXXFLAGS += -DMULTICORE -fopenmp
-endif
+
 
 ifeq ($(CPPDEBUG),1)
         CXXFLAGS += -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
@@ -203,10 +251,17 @@ $(LIBSNARK_A): $(LIB_OBJS) $(AR_LIBS)
 libsnark.so: $(LIBSNARK_A) $(DEPINST_EXISTS)
 	$(CXX) -o $@   --shared -Wl,--whole-archive $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) -Wl,--no-whole-archive $(LDLIBS)
 
+src/gadgetlib2/tests/gadgetlib2_test: \
+	src/gadgetlib2/tests/adapters_UTEST.cpp \
+	src/gadgetlib2/tests/constraint_UTEST.cpp \
+	src/gadgetlib2/tests/gadget_UTEST.cpp \
+	src/gadgetlib2/tests/integration_UTEST.cpp \
+	src/gadgetlib2/tests/protoboard_UTEST.cpp \
+	src/gadgetlib2/tests/variable_UTEST.cpp
 
 $(EXECUTABLES): %: %.o $(LIBSNARK_A) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
-
+	
 $(EXECUTABLES_WITH_GTEST): %: %.o $(LIBSNARK_A) $(if $(COMPILE_GTEST),$(LIBGTEST_A)) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 

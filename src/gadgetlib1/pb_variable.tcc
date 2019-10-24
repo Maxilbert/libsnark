@@ -114,7 +114,6 @@ template<typename FieldT>
 pb_linear_combination<FieldT>::pb_linear_combination()
 {
     this->is_variable = false;
-    this->index = 0;
 }
 
 template<typename FieldT>

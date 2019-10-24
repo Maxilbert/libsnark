@@ -79,6 +79,8 @@ public:
     G1_vector<ppT> H_query;
     G1_vector<ppT> K_query;
 
+    r1cs_ppzksnark_constraint_system<ppT> constraint_system;
+
     r1cs_ppzksnark_proving_key() {};
     r1cs_ppzksnark_proving_key<ppT>& operator=(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
@@ -87,12 +89,14 @@ public:
                                knowledge_commitment_vector<G2<ppT>, G1<ppT> > &&B_query,
                                knowledge_commitment_vector<G1<ppT>, G1<ppT> > &&C_query,
                                G1_vector<ppT> &&H_query,
-                               G1_vector<ppT> &&K_query) :
+                               G1_vector<ppT> &&K_query,
+                               r1cs_ppzksnark_constraint_system<ppT> &&constraint_system) :
         A_query(std::move(A_query)),
         B_query(std::move(B_query)),
         C_query(std::move(C_query)),
         H_query(std::move(H_query)),
-        K_query(std::move(K_query))
+        K_query(std::move(K_query)),
+        constraint_system(std::move(constraint_system))
     {};
 
     size_t G1_size() const
@@ -370,19 +374,6 @@ public:
 template<typename ppT>
 r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constraint_system<ppT> &cs);
 
-template<typename ppT>
-r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(
-    const r1cs_ppzksnark_constraint_system<ppT> &cs,
-    const Fr<ppT>& t,
-    const Fr<ppT>& alphaA,
-    const Fr<ppT>& alphaB,
-    const Fr<ppT>& alphaC,
-    const Fr<ppT>& rA,
-    const Fr<ppT>& rB,
-    const Fr<ppT>& beta,
-    const Fr<ppT>& gamma
-);
-
 /**
  * A prover algorithm for the R1CS ppzkSNARK.
  *
@@ -470,99 +461,6 @@ template<typename ppT>
 bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
-
-/****Batch and probabilistic verification 
- * using randomness and the bilinearity of the pairing operation, the Pinocchio verifier can be made more efficient
- * with the price of making the verification procedure probabilistic, introducing a negligible chance of accepting a bad proof.
- * In a similar way verifying a batch of proofs can be bundled into verifying a single pairing equation using randomness
- * such that the verifier always accepts if all proofs in the batch are valid, and the verifier accepts with a negligible 
- * probability when one of the proofs in the batch is invalid.
- * The methods below implemement these verifiers,
- * and the logic behind them are described in  src/zk_proof_systems/batchverification.pdf
- *
- */
-/**
- * The purpose of this class is to enable one-time precomputation of elements that are 
- * functions of the verification key
- * and are used in each invocation of r1cs_ppzksnark_probabilistic_verifier
- * and also r1cs_ppzksnark_batcher
- * these elements are the G2 arguments of the pairings in src/zk_proof_systems/batchverification.pdf
- */
-
-//Better explanation of names, have this inherit from processed_verification_key
-template<typename ppT>
-class r1cs_ppzksnark_processed_batch_verification_key : public r1cs_ppzksnark_processed_verification_key<ppT> {
-public:
-    //here pair_i is actually the G2 argument in the i'th pairing of the batch verifier equation
-    G2_precomp<ppT> pair1;
-    G2_precomp<ppT> pair2;
-    G2_precomp<ppT> pair3;
-    G2_precomp<ppT> pair4;
-    G2_precomp<ppT> pair5;
-    G2_precomp<ppT> pair6;
-   
-    // accumulation_vector<G1<ppT> > encoded_IC_query;
-
-    // bool operator==(const r1cs_ppzksnark_processed_verification_key &other) const;
-    // friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
-    // friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
-};
-
-//a data structure to store intermediate G1 argument results from various proofs before the final batch verification
-// (except for the seventh member where we store the result of a product of Miller Loops. See Section 2 of  src/zk_proof_systems/batchverification.pdf.
-template<typename ppT>
-class batch_verification_accumulator{
-public:
-    //here pair_i is actually the G1 argument in the i'th pairing of the batch verifier equation
-    G1<ppT> pair1;
-    G1<ppT> pair2;
-    G1<ppT> pair3;
-    G1<ppT> pair4;
-    G1<ppT> pair5;
-    G1<ppT> pair6;
-    //as explained in the document, the 7th pairing contains elements of the proof in both arguments, so we need to store
-    //a product of Miller Loops rather than just the first argument
-    Fqk<ppT> pair7;
-
-batch_verification_accumulator():
-                                pair1(G1<ppT>::zero()),
-                                pair2(G1<ppT>::zero()),
-                                pair3(G1<ppT>::zero()),
-                                pair4(G1<ppT>::zero()),
-                                pair5(G1<ppT>::zero()),
-                                pair6(G1<ppT>::zero()),
-                                pair7(Fqk<ppT>::one())
-{
-
-};
-};
-
-
-
-
-
-/*
- * accumulate another proof inside acc for the final batch check
- */
-template<typename ppT>
-void r1cs_ppzksnark_batcher(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                            batch_verification_accumulator<ppT> &acc,
-                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
-                                            const r1cs_ppzksnark_proof<ppT> &proof);
-
-template<typename ppT>
-bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
-                                            const r1cs_ppzksnark_proof<ppT> &proof);
-template<typename ppT>
-bool r1cs_ppzksnark_batch_verifier(const r1cs_ppzksnark_processed_batch_verification_key <ppT> &pvk,
-                                            const batch_verification_accumulator <ppT> &acc);
-template<typename ppT>
-r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifier_process_vk(
-    const r1cs_ppzksnark_verification_key<ppT> &vk,
-    const r1cs_ppzksnark_primary_input<ppT> &primary_input,
-    const r1cs_ppzksnark_proof<ppT> &proof);
-
 
 
 } // libsnark

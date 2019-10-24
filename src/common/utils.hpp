@@ -25,6 +25,9 @@ size_t log2(size_t n);
 
 inline size_t exp2(size_t k) { return 1ul << k; }
 
+size_t to_twos_complement(int i, size_t w);
+int from_twos_complement(size_t i, size_t w);
+
 size_t bitreverse(size_t n, const size_t l);
 bit_vector int_list_to_bits(const std::initializer_list<unsigned long> &l, const size_t wordsize);
 long long div_ceil(long long x, long long y);
@@ -33,14 +36,10 @@ bool is_little_endian();
 
 std::string FORMAT(const std::string &prefix, const char* format, ...);
 
-/* A variadic template to suppress unused argument warnings */
-template<typename ... Types>
-void UNUSED(Types&&...) {}
-
 #ifdef DEBUG
 #define FMT FORMAT
 #else
-#define FMT(...) (UNUSED(__VA_ARGS__), "")
+#define FMT(...) ""
 #endif
 
 void serialize_bit_vector(std::ostream &out, const bit_vector &v);

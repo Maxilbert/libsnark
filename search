@@ -1,0 +1,2 @@
+src/interface/run_libsnark_verifier.cpp~:70:bigint four = new bigint<FieldT>("4");
+src/interface/run_libsnark_verifier.cpp:70:bigint <FieldT> four = new bigint<FieldT>("4");

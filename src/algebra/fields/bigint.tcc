@@ -10,17 +10,14 @@
 #ifndef BIGINT_TCC_
 #define BIGINT_TCC_
 #include <cassert>
-#include <climits>
 #include <cstring>
-#include "sodium.h"
-#include "common/assert_except.hpp"
 
 namespace libsnark {
 
 template<mp_size_t n>
 bigint<n>::bigint(const unsigned long x) /// Initalize from a small integer
 {
-    static_assert(ULONG_MAX <= GMP_NUMB_MAX, "unsigned long does not fit in a GMP limb");
+    assert(8*sizeof(x) <= GMP_NUMB_BITS);
     this->data[0] = x;
 }
 
@@ -32,12 +29,12 @@ bigint<n>::bigint(const char* s) /// Initialize from a string containing an inte
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert_except(s[i] >= '0' && s[i] <= '9');
+        assert(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(this->data, s_copy, l, 10);
-    assert_except(limbs_written <= n);
+    assert(limbs_written <= n);
 
     delete[] s_copy;
 }
@@ -54,7 +51,7 @@ bigint<n>::bigint(const mpz_t r) /// Initialize from MPZ element
         mpz_fdiv_q_2exp(k, k, GMP_NUMB_BITS);
     }
 
-    assert_except(mpz_sgn(k) == 0);
+    assert(mpz_sgn(k) == 0);
     mpz_clear(k);
 }
 
@@ -91,7 +88,7 @@ void bigint<n>::clear()
 template<mp_size_t n>
 bool bigint<n>::is_zero() const
 {
-    for (mp_size_t i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
         if (this->data[i])
         {
@@ -165,68 +162,14 @@ bool bigint<n>::test_bit(const std::size_t bitno) const
     }
 }
 
-
-template<mp_size_t n> template<mp_size_t m>
-inline void bigint<n>::operator+=(const bigint<m>& other)
-{
-    static_assert(n >= m, "first arg must not be smaller than second arg for bigint in-place add");
-    mpn_add(data, data, n, other.data, m);
-}
-
-template<mp_size_t n> template<mp_size_t m>
-inline bigint<n+m> bigint<n>::operator*(const bigint<m>& other) const
-{
-    static_assert(n >= m, "first arg must not be smaller than second arg for bigint mul");
-    bigint<n+m> res;
-    mpn_mul(res.data, data, n, other.data, m);
-    return res;
-}
-
-template<mp_size_t n> template<mp_size_t d>
-inline void bigint<n>::div_qr(bigint<n-d+1>& quotient, bigint<d>& remainder,
-                              const bigint<n>& dividend, const bigint<d>& divisor)
-{
-    static_assert(n >= d, "dividend must not be smaller than divisor for bigint::div_qr");
-    assert_except(divisor.data[d-1] != 0);
-    mpn_tdiv_qr(quotient.data, remainder.data, 0, dividend.data, n, divisor.data, d);
-}
-
-// Return a copy shortened to m limbs provided it is less than limit, throwing std::domain_error if not in range.
-template<mp_size_t n> template<mp_size_t m>
-inline bigint<m> bigint<n>::shorten(const bigint<m>& q, const char *msg) const
-{
-    static_assert(m <= n, "number of limbs must not increase for bigint::shorten");
-    for (mp_size_t i = m; i < n; i++) { // high-order limbs
-        if (data[i] != 0) {
-            throw std::domain_error(msg);
-        }
-    }
-    bigint<m> res;
-    mpn_copyi(res.data, data, n);
-    res.limit(q, msg);
-    return res;
-}
-
-template<mp_size_t n>
-inline void bigint<n>::limit(const bigint<n>& q, const char *msg) const
-{
-    if (!(q > *this)) {
-        throw std::domain_error(msg);
-    }
-}
-
-template<mp_size_t n>
-inline bool bigint<n>::operator>(const bigint<n>& other) const
-{
-    return mpn_cmp(this->data, other.data, n) > 0;
-}
-
 template<mp_size_t n>
 bigint<n>& bigint<n>::randomize()
 {
-    assert_except(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
-
-    randombytes_buf(this->data, sizeof(mp_limb_t) * n);
+    assert(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
+    FILE *fp = fopen("/dev/urandom", "r");  //TODO Remove hard-coded use of /dev/urandom.
+    size_t bytes_read = fread(this->data, 1, sizeof(mp_limb_t) * n, fp);
+    assert(bytes_read == sizeof(mp_limb_t) * n);
+    fclose(fp);
 
     return (*this);
 }
@@ -263,12 +206,12 @@ std::istream& operator>>(std::istream &in, bigint<n> &b)
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert_except(s[i] >= '0' && s[i] <= '9');
+        assert(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(b.data, s_copy, l, 10);
-    assert_except(limbs_written <= n);
+    assert(limbs_written <= n);
 
     delete[] s_copy;
 #endif

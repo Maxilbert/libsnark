@@ -8,8 +8,6 @@
 #ifndef KC_MULTIEXP_TCC_
 #define KC_MULTIEXP_TCC_
 
-#include "common/assert_except.hpp"
-
 namespace libsnark {
 
 template<typename T1, typename T2, mp_size_t n>
@@ -47,14 +45,9 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
     size_t num_add = 0;
     size_t num_other = 0;
 
-    const size_t scalar_length = std::distance(scalar_start, scalar_end);
-
     while (index_it != vec.indices.end() && *index_it < max_idx)
     {
-        const size_t scalar_position = (*index_it) - min_idx;
-        assert_except(scalar_position < scalar_length);
-
-        const FieldT scalar = *(scalar_start + scalar_position);
+        const FieldT scalar = *(scalar_start + ((*index_it) - min_idx));
 
         if (scalar == zero)
         {
@@ -83,9 +76,9 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
         ++value_it;
     }
 
-    //print_indent(); printf("* Elements of w skipped: %zu (%0.2f%%)\n", num_skip, 100.*num_skip/(num_skip+num_add+num_other));
-    //print_indent(); printf("* Elements of w processed with special addition: %zu (%0.2f%%)\n", num_add, 100.*num_add/(num_skip+num_add+num_other));
-    //print_indent(); printf("* Elements of w remaining: %zu (%0.2f%%)\n", num_other, 100.*num_other/(num_skip+num_add+num_other));
+    print_indent(); printf("* Elements of w skipped: %zu (%0.2f%%)\n", num_skip, 100.*num_skip/(num_skip+num_add+num_other));
+    print_indent(); printf("* Elements of w processed with special addition: %zu (%0.2f%%)\n", num_add, 100.*num_add/(num_skip+num_add+num_other));
+    print_indent(); printf("* Elements of w remaining: %zu (%0.2f%%)\n", num_other, 100.*num_other/(num_skip+num_add+num_other));
     leave_block("Process scalar vector");
 
     return acc + multi_exp<knowledge_commitment<T1, T2>, FieldT>(g.begin(), g.end(), p.begin(), p.end(), chunks, use_multiexp);
