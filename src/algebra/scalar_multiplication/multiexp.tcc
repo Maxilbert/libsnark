@@ -329,10 +329,6 @@ T multi_exp_with_mixed_addition(typename std::vector<T>::const_iterator vec_star
                                   const size_t chunks,
                                   const bool use_multiexp)
 {
-<<<<<<< HEAD
-=======
-    assert(std::distance(vec_start, vec_end) == std::distance(scalar_start, scalar_end));
->>>>>>> master
     enter_block("Process scalar vector");
     auto value_it = vec_start;
     auto scalar_it = scalar_start;
