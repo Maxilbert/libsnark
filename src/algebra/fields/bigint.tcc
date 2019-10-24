@@ -11,6 +11,10 @@
 #define BIGINT_TCC_
 #include <cassert>
 #include <cstring>
+<<<<<<< HEAD
+=======
+#include "sodium.h"
+>>>>>>> master
 
 namespace libsnark {
 
@@ -162,14 +166,78 @@ bool bigint<n>::test_bit(const std::size_t bitno) const
     }
 }
 
+<<<<<<< HEAD
+=======
+
+template<mp_size_t n> template<mp_size_t m>
+inline void bigint<n>::operator+=(const bigint<m>& other)
+{
+    static_assert(n >= m, "first arg must not be smaller than second arg for bigint in-place add");
+    mpn_add(data, data, n, other.data, m);
+}
+
+template<mp_size_t n> template<mp_size_t m>
+inline bigint<n+m> bigint<n>::operator*(const bigint<m>& other) const
+{
+    static_assert(n >= m, "first arg must not be smaller than second arg for bigint mul");
+    bigint<n+m> res;
+    mpn_mul(res.data, data, n, other.data, m);
+    return res;
+}
+
+template<mp_size_t n> template<mp_size_t d>
+inline void bigint<n>::div_qr(bigint<n-d+1>& quotient, bigint<d>& remainder,
+                              const bigint<n>& dividend, const bigint<d>& divisor)
+{
+    static_assert(n >= d, "dividend must not be smaller than divisor for bigint::div_qr");
+    assert(divisor.data[d-1] != 0);
+    mpn_tdiv_qr(quotient.data, remainder.data, 0, dividend.data, n, divisor.data, d);
+}
+
+// Return a copy shortened to m limbs provided it is less than limit, throwing std::domain_error if not in range.
+template<mp_size_t n> template<mp_size_t m>
+inline bigint<m> bigint<n>::shorten(const bigint<m>& q, const char *msg) const
+{
+    static_assert(m <= n, "number of limbs must not increase for bigint::shorten");
+    for (mp_size_t i = m; i < n; i++) { // high-order limbs
+        if (data[i] != 0) {
+            throw std::domain_error(msg);
+        }
+    }
+    bigint<m> res;
+    mpn_copyi(res.data, data, n);
+    res.limit(q, msg);
+    return res;
+}
+
+template<mp_size_t n>
+inline void bigint<n>::limit(const bigint<n>& q, const char *msg) const
+{
+    if (!(q > *this)) {
+        throw std::domain_error(msg);
+    }
+}
+
+template<mp_size_t n>
+inline bool bigint<n>::operator>(const bigint<n>& other) const
+{
+    return mpn_cmp(this->data, other.data, n) > 0;
+}
+
+>>>>>>> master
 template<mp_size_t n>
 bigint<n>& bigint<n>::randomize()
 {
     assert(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
+<<<<<<< HEAD
     FILE *fp = fopen("/dev/urandom", "r");  //TODO Remove hard-coded use of /dev/urandom.
     size_t bytes_read = fread(this->data, 1, sizeof(mp_limb_t) * n, fp);
     assert(bytes_read == sizeof(mp_limb_t) * n);
     fclose(fp);
+=======
+
+    randombytes_buf(this->data, sizeof(mp_limb_t) * n);
+>>>>>>> master
 
     return (*this);
 }

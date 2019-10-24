@@ -16,6 +16,10 @@
 
 #include <cassert>
 #include <sstream>
+<<<<<<< HEAD
+=======
+#include "common/utils.hpp"
+>>>>>>> master
 
 namespace libsnark {
 
